@@ -50,64 +50,35 @@ app.use(express.static("public"));
 
 app.use(express.static("public"));
 
-io.on("connection", (socket) => {
-  console.log("Client connected");
-
-  // Handle disconnection
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-  });
-});
-
 server.listen(3000, () => {
   console.log("Server listening on port 3000");
 });
 
 // //chatt
-// const server = http.createServer(app);
-// server.listen(5000);
 
-// const io = new Server(server, {
-//   cors: {
-//     origin: "https://grddit-7f7df.web.app",
-//     methods: ["GET", "POST"],
-//     credentials: true,
-//     transports: ["polling"],
-//   },
-// });
+io.on("connection", (socket) => {
+  console.log("a user connected");
 
-// const apiProxy = createProxyMiddleware({
-//   target: "https://grddit-backend.onrender.com:5000", // target the Socket.IO server
-//   changeOrigin: true,
-//   pathRewrite: { "^/socket.io": "" }, // rewrite the path to remove the /socket.io prefix
-//   ws: true, // enable WebSocket support
-// });
+  socket.on("joinRoom", (data) => {
+    socket.join(data);
+  });
 
-// app.use("/socket.io", apiProxy); // use the proxy for requests to /socket.io
+  socket.on("sendMessage", async (data) => {
+    const author = data.author;
+    const user = await userModel.findOne({ username: author });
+    console.log(user);
+    if (!user) return;
+    socket.to(data.id).emit("receiveMessage", { img: user.img, ...data });
+    const chat = await chats.findOne({ roomId: data.id });
+    if (!chat) return;
+    chat.messages.push(data);
+    await chat.save();
+  });
 
-// io.on("connection", (socket) => {
-//   console.log("a user connected");
-
-//   socket.on("joinRoom", (data) => {
-//     socket.join(data);
-//   });
-
-//   socket.on("sendMessage", async (data) => {
-//     const author = data.author;
-//     const user = await userModel.findOne({ username: author });
-//     console.log(user);
-//     if (!user) return;
-//     socket.to(data.id).emit("receiveMessage", { img: user.img, ...data });
-//     const chat = await chats.findOne({ roomId: data.id });
-//     if (!chat) return;
-//     chat.messages.push(data);
-//     await chat.save();
-//   });
-
-//   socket.on("disconnect", () => {
-//     console.log("user disconnected");
-//   });
-// });
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
 
 app.use;
 
