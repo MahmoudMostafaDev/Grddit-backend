@@ -8,17 +8,10 @@ const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
 const asyncHandler = require("./middleware/asyncHandler");
 const cors = require("cors");
-const http = require("http");
-const io = require("socket.io")(http, {
-  path: "/socket.io",
-  cors: {
-    origin: "https://grddit-7f7df.web.app",
-    methods: ["GET", "POST"],
-  },
-});
+const { Server } = require("socket.io");
 const chats = require("./models/Chats");
 const { createProxyMiddleware } = require("http-proxy-middleware");
-
+const http = require("http");
 const upload = require("./middleware/multer");
 const cloudinary = require("./util/cloudinary");
 
@@ -28,7 +21,6 @@ const postsRoute = require("./controlers/posts");
 const subsRoute = require("./controlers/subs");
 const userRoute = require("./controlers/users");
 const chatRoute = require("./controlers/chats");
-const path = require("path");
 
 dotenv.config();
 
@@ -62,17 +54,20 @@ app.listen(5000, () => console.log("server is running on port 5000"));
 const server = http.createServer(app);
 server.listen(5050);
 
-// const io = new Server(server, {
-//   cors: {
-//     origin: "https://grddit-7f7df.web.app",
-//     methods: ["GET", "POST"],
-//   },
-// });
+const io = new Server(server, {
+  cors: {
+    origin: "https://grddit-7f7df.web.app",
+    methods: ["GET", "POST"],
+  },
+  path: "/socket.io",
+  transports: ["websocket", "polling"],
+  allowEIO3: true,
+});
 
-const apiProxy = createProxyMiddleware("/socket.io", {
-  target: "https://grddit-backend.onrender.com",
+const apiProxy = createProxyMiddleware({
+  target: "https://grddit-backend.onrender.com:5050",
   changeOrigin: true,
-  ws: true,
+  pathRewrite: { "^/socket.io": "" },
 });
 
 app.use("/socket.io", apiProxy);
