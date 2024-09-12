@@ -57,6 +57,7 @@ const apiProxy = createProxyMiddleware({
 });
 
 app.use("/socket.io", apiProxy); // use the proxy for requests to /socket.io
+io.listen(5050);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
