@@ -13,7 +13,7 @@ const chats = require("./models/Chats");
 const http = require("http");
 const upload = require("./middleware/multer");
 const cloudinary = require("./util/cloudinary");
-
+const { createProxyMiddleware } = require("http-proxy-middleware");
 // routes
 const recentRoute = require("./controlers/recent");
 const postsRoute = require("./controlers/posts");
@@ -46,6 +46,15 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+const apiProxy = createProxyMiddleware({
+  target: "https://grddit-backend.onrender.com/:5050", // target the Socket.IO server
+  changeOrigin: true,
+  pathRewrite: { "^/socket.io": "" }, // rewrite the path to remove the /socket.io prefix
+  ws: true, // enable WebSocket support
+});
+
+app.use("/socket.io", apiProxy); // use the proxy for requests to /socket.io
 
 io.on("connection", (socket) => {
   console.log("a user connected");
