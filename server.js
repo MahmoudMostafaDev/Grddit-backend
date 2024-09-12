@@ -61,13 +61,13 @@ const io = new Server(server, {
   },
 });
 
-// const apiProxy = createProxyMiddleware({
-//   target: "https://grddit-backend.onrender.com:5050",
-//   changeOrigin: true,
-//   pathRewrite: { "^/socket.io": "" },
-// });
+const apiProxy = createProxyMiddleware({
+  target: "https://grddit-backend.onrender.com:5050",
+  changeOrigin: true,
+  pathRewrite: { "^/socket.io": "" },
+});
 
-// app.use("/socket.io", apiProxy);
+app.use("/socket.io", apiProxy);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
