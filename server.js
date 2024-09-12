@@ -51,8 +51,7 @@ app.use("/api/chats", chatRoute);
 app.listen(5000, () => console.log("server is running on port 5000"));
 
 //chatt
-const server = http.createServer(app);
-server.listen(5050);
+const server = http.createServer();
 
 const io = new Server(server, {
   cors: {
@@ -63,23 +62,14 @@ const io = new Server(server, {
   transports: ["websocket", "polling"],
   allowEIO3: true,
 });
-io.on("connect_error", (err) => {
-  // the reason of the error, for example "xhr poll error"
-  console.log(err.message);
 
-  // some additional description, for example the status code of the initial HTTP response
-  console.log(err.description);
+// const apiProxy = createProxyMiddleware({
+//   target: "https://grddit-backend.onrender.com:5050",
+//   changeOrigin: true,
+//   pathRewrite: { "^/socket.io": "" },
+// });
 
-  // some additional context, for example the XMLHttpRequest object
-  console.log(err.context);
-});
-const apiProxy = createProxyMiddleware({
-  target: "https://grddit-backend.onrender.com:5050",
-  changeOrigin: true,
-  pathRewrite: { "^/socket.io": "" },
-});
-
-app.use("/socket.io", apiProxy);
+// app.use("/socket.io", apiProxy);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
@@ -104,7 +94,7 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 });
-
+server.listen(5050);
 app.use;
 
 app.post("/login", async (req, res) => {
