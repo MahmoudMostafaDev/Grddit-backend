@@ -63,7 +63,16 @@ const io = new Server(server, {
   transports: ["websocket", "polling"],
   allowEIO3: true,
 });
+io.on("connect_error", (err) => {
+  // the reason of the error, for example "xhr poll error"
+  console.log(err.message);
 
+  // some additional description, for example the status code of the initial HTTP response
+  console.log(err.description);
+
+  // some additional context, for example the XMLHttpRequest object
+  console.log(err.context);
+});
 const apiProxy = createProxyMiddleware({
   target: "https://grddit-backend.onrender.com:5050",
   changeOrigin: true,
