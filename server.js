@@ -8,6 +8,7 @@ const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
 const asyncHandler = require("./middleware/asyncHandler");
 const cors = require("cors");
+const http = require("http");
 const io = require("socket.io")(http, {
   path: "/socket.io",
   cors: {
@@ -17,7 +18,7 @@ const io = require("socket.io")(http, {
 });
 const chats = require("./models/Chats");
 const { createProxyMiddleware } = require("http-proxy-middleware");
-const http = require("http");
+
 const upload = require("./middleware/multer");
 const cloudinary = require("./util/cloudinary");
 
