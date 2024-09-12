@@ -10,7 +10,6 @@ const asyncHandler = require("./middleware/asyncHandler");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const chats = require("./models/Chats");
-const { createProxyMiddleware } = require("http-proxy-middleware");
 const http = require("http");
 const upload = require("./middleware/multer");
 const cloudinary = require("./util/cloudinary");
@@ -28,19 +27,6 @@ console.log(getUserPassword("mahmoud"));
 connectDB();
 const app = express();
 app.use(cors());
-app.use(function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "https://grddit-7f7df.web.app");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
-});
 app.use(express.json());
 // use routes
 app.use("/api/recent", recentRoute);
@@ -52,26 +38,14 @@ app.listen(5000, () => console.log("server is running on port 5000"));
 
 //chatt
 const server = http.createServer(app);
-server.listen(5050, () => {
-  console.log("server is running on port 5050");
-});
+server.listen(5050);
+
 const io = new Server(server, {
   cors: {
     origin: "https://grddit-7f7df.web.app",
     methods: ["GET", "POST"],
   },
-  path: "/socket.io",
-  transports: ["websocket", "polling"],
-  allowEIO3: true,
 });
-
-const apiProxy = createProxyMiddleware({
-  target: "https://grddit-backend.onrender.com:5050",
-  changeOrigin: true,
-  pathRewrite: { "^/socket.io": "" },
-});
-
-app.use("/socket.io", apiProxy);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
@@ -96,7 +70,7 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 });
-server.listen(5050);
+
 app.use;
 
 app.post("/login", async (req, res) => {
