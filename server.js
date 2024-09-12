@@ -10,7 +10,7 @@ const asyncHandler = require("./middleware/asyncHandler");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const chats = require("./models/Chats");
-const http = require("http");
+
 const upload = require("./middleware/multer");
 const cloudinary = require("./util/cloudinary");
 const { createProxyMiddleware } = require("http-proxy-middleware");
@@ -36,51 +36,76 @@ app.use("/api/user", userRoute);
 app.use("/api/chats", chatRoute);
 app.listen(5000, () => console.log("server is running on port 5000"));
 
-//chatt
-const server = http.createServer(app);
-server.listen(5000);
-
-const io = new Server(server, {
+//chat 2 :
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
   cors: {
     origin: "https://grddit-7f7df.web.app",
     methods: ["GET", "POST"],
-    credentials: true,
-    transports: ["polling"],
   },
 });
+app.use(express.static("public"));
 
-const apiProxy = createProxyMiddleware({
-  target: "https://grddit-backend.onrender.com:5000", // target the Socket.IO server
-  changeOrigin: true,
-  pathRewrite: { "^/socket.io": "" }, // rewrite the path to remove the /socket.io prefix
-  ws: true, // enable WebSocket support
-});
-
-app.use("/socket.io", apiProxy); // use the proxy for requests to /socket.io
+app.use(express.static("public"));
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("Client connected");
 
-  socket.on("joinRoom", (data) => {
-    socket.join(data);
-  });
-
-  socket.on("sendMessage", async (data) => {
-    const author = data.author;
-    const user = await userModel.findOne({ username: author });
-    console.log(user);
-    if (!user) return;
-    socket.to(data.id).emit("receiveMessage", { img: user.img, ...data });
-    const chat = await chats.findOne({ roomId: data.id });
-    if (!chat) return;
-    chat.messages.push(data);
-    await chat.save();
-  });
-
+  // Handle disconnection
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    console.log("Client disconnected");
   });
 });
+
+server.listen(3000, () => {
+  console.log("Server listening on port 3000");
+});
+
+// //chatt
+// const server = http.createServer(app);
+// server.listen(5000);
+
+// const io = new Server(server, {
+//   cors: {
+//     origin: "https://grddit-7f7df.web.app",
+//     methods: ["GET", "POST"],
+//     credentials: true,
+//     transports: ["polling"],
+//   },
+// });
+
+// const apiProxy = createProxyMiddleware({
+//   target: "https://grddit-backend.onrender.com:5000", // target the Socket.IO server
+//   changeOrigin: true,
+//   pathRewrite: { "^/socket.io": "" }, // rewrite the path to remove the /socket.io prefix
+//   ws: true, // enable WebSocket support
+// });
+
+// app.use("/socket.io", apiProxy); // use the proxy for requests to /socket.io
+
+// io.on("connection", (socket) => {
+//   console.log("a user connected");
+
+//   socket.on("joinRoom", (data) => {
+//     socket.join(data);
+//   });
+
+//   socket.on("sendMessage", async (data) => {
+//     const author = data.author;
+//     const user = await userModel.findOne({ username: author });
+//     console.log(user);
+//     if (!user) return;
+//     socket.to(data.id).emit("receiveMessage", { img: user.img, ...data });
+//     const chat = await chats.findOne({ roomId: data.id });
+//     if (!chat) return;
+//     chat.messages.push(data);
+//     await chat.save();
+//   });
+
+//   socket.on("disconnect", () => {
+//     console.log("user disconnected");
+//   });
+// });
 
 app.use;
 
