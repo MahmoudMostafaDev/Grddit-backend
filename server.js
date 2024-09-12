@@ -65,6 +65,7 @@ const apiProxy = createProxyMiddleware({
   target: "https://grddit-backend.onrender.com:5050",
   changeOrigin: true,
   pathRewrite: { "^/socket.io": "" },
+  ws: true,
 });
 
 app.use("/socket.io", apiProxy);
