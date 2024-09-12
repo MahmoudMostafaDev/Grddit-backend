@@ -44,6 +44,8 @@ const io = new Server(server, {
   cors: {
     origin: "https://grddit-7f7df.web.app",
     methods: ["GET", "POST"],
+    credentials: true,
+    transports: ["polling"],
   },
 });
 
