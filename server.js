@@ -50,7 +50,7 @@ const io = new Server(server, {
 });
 
 const apiProxy = createProxyMiddleware({
-  target: "https://grddit-backend.onrender.com:5050", // target the Socket.IO server
+  target: "https://grddit-backend.onrender.com:5000", // target the Socket.IO server
   changeOrigin: true,
   pathRewrite: { "^/socket.io": "" }, // rewrite the path to remove the /socket.io prefix
   ws: true, // enable WebSocket support
