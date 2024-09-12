@@ -10,6 +10,7 @@ const asyncHandler = require("./middleware/asyncHandler");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const chats = require("./models/Chats");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 const http = require("http");
 const upload = require("./middleware/multer");
 const cloudinary = require("./util/cloudinary");
@@ -59,6 +60,14 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+const apiProxy = createProxyMiddleware({
+  target: "https://grddit-backend.onrender.com:5050",
+  changeOrigin: true,
+  pathRewrite: { "^/socket.io": "" },
+});
+
+app.use("/socket.io", apiProxy);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
