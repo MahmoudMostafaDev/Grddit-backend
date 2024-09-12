@@ -20,6 +20,7 @@ const postsRoute = require("./controlers/posts");
 const subsRoute = require("./controlers/subs");
 const userRoute = require("./controlers/users");
 const chatRoute = require("./controlers/chats");
+const path = require("path");
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ const io = require("socket.io")(server, {
     origin: "https://grddit-7f7df.web.app",
     methods: ["GET", "POST"],
   },
+  path: "/socket.io",
 });
 app.use(express.static("public"));
 
