@@ -38,7 +38,7 @@ app.listen(5000, () => console.log("server is running on port 5000"));
 
 //chatt
 const server = http.createServer(app);
-server.listen(5050);
+server.listen(5000);
 
 const io = new Server(server, {
   cors: {
@@ -57,7 +57,6 @@ const apiProxy = createProxyMiddleware({
 });
 
 app.use("/socket.io", apiProxy); // use the proxy for requests to /socket.io
-io.listen(5050);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
