@@ -51,8 +51,10 @@ app.use("/api/chats", chatRoute);
 app.listen(5000, () => console.log("server is running on port 5000"));
 
 //chatt
-const server = http.createServer();
-
+const server = http.createServer(app);
+server.listen(5050, () => {
+  console.log("server is running on port 5050");
+});
 const io = new Server(server, {
   cors: {
     origin: "https://grddit-7f7df.web.app",
@@ -63,13 +65,13 @@ const io = new Server(server, {
   allowEIO3: true,
 });
 
-// const apiProxy = createProxyMiddleware({
-//   target: "https://grddit-backend.onrender.com:5050",
-//   changeOrigin: true,
-//   pathRewrite: { "^/socket.io": "" },
-// });
+const apiProxy = createProxyMiddleware({
+  target: "https://grddit-backend.onrender.com:5050",
+  changeOrigin: true,
+  pathRewrite: { "^/socket.io": "" },
+});
 
-// app.use("/socket.io", apiProxy);
+app.use("/socket.io", apiProxy);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
