@@ -1,7 +1,7 @@
 # Reddit Clone Backend
 
 ## Overview
-This repository contains the backend code for a Reddit clone application, built using Node.js and Express.js. The project demonstrates my skills in developing scalable and secure backend services, integrating various libraries and tools to handle authentication, file uploads, real-time communication, and more.
+This repository S contains the backend code for a Reddit clone application, built using Node.js and Express.js. The project demonstrates my skills in developing scalable and secure backend services, integrating various libraries and tools to handle authentication, file uploads, real-time communication, and more.
 
 ## Features
 - **User Authentication**: Secure user registration and login using bcrypt and JSON Web Tokens (JWT).
