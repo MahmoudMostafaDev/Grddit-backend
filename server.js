@@ -41,7 +41,7 @@ app.listen(5000, () => console.log("server is running on port 5000"));
 const server = require("http").createServer(app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "https://grddit-7f7df.web.app",
+    origin: "https://grdditgreen.vercel.app/",
     methods: ["GET", "POST"],
   },
   path: "/socket.io",
